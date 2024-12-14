@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}系统维护{% endblock %}
+
+{% block content %}
+<div class="admin-content">
+    <h1>系统维护</h1>
+    
+    <!-- 数据库备份 -->
+    <div class="section">
+        <h2>数据库备份</h2>
+        <form action="{{ url_for('admin.create_backup') }}" method="POST">
+            <button type="submit" class="btn">创建备份</button>
+        </form>
+        
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>文件名</th>
+                    <th>创建时间</th>
+                    <th>大小</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for backup in backups %}
+                <tr>
+                    <td>{{ backup.filename }}</td>
+                    <td>{{ backup.created_at }}</td>
+                    <td>{{ backup.size }}</td>
+                    <td>
+                        <form action="{{ url_for('admin.restore_backup', filename=backup.filename) }}" 
+                              method="POST" style="display: inline;">
+                            <button type="submit" class="btn" 
+                                    onclick="return confirm('确定要恢复到此备份吗？当前数据将被覆盖。')">
+                                恢复
+                            </button>
+                        </form>
+                        <a href="/backups/{{ backup.filename }}" 
+                           class="btn" download>下载</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- 系统日志 -->
+    <div class="section">
+        <h2>系统日志</h2>
+        <div class="filter-form">
+            <form action="{{ url_for('admin.logs') }}" method="GET">
+                <div class="form-group">
+                    <label>开始日期：</label>
+                    <input type="date" name="start_date">
+                </div>
+                <div class="form-group">
+                    <label>结束日期：</label>
+                    <input type="date" name="end_date">
+                </div>
+                <div class="form-group">
+                    <label>操作类型：</label>
+                    <select name="operation_type">
+                        <option value="">全部</option>
+                        <option value="login">登录</option>
+                        <option value="create_backup">创建备份</option>
+                        <option value="restore_backup">恢复备份</option>
+                        <option value="book_operation">图书操作</option>
+                        <option value="user_operation">用户操作</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">筛选</button>
+            </form>
+        </div>
+        
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>时间</th>
+                    <th>用户</th>
+                    <th>操作</th>
+                    <th>详情</th>
+                    <th>IP地址</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.created_at }}</td>
+                    <td>{{ log.username }}</td>
+                    <td>{{ log.operation }}</td>
+                    <td>{{ log.details }}</td>
+                    <td>{{ log.ip_address }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 

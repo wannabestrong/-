@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}系统管理{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <h1>系统管理</h1>
+    <div class="admin-menu">
+        <h2>管理功能：</h2>
+        <div class="menu-grid">
+            <div class="menu-card">
+                <h3>用户管理</h3>
+                <a href="{{ url_for('admin.list_users') }}" class="btn">用户列表</a>
+                <a href="{{ url_for('admin.add_user') }}" class="btn">添加用户</a>
+            </div>
+            
+            <div class="menu-card">
+                <h3>图书管理</h3>
+                <a href="{{ url_for('admin.list_books') }}" class="btn">图书列表</a>
+                <a href="{{ url_for('admin.add_book') }}" class="btn">添加图书</a>
+                <a href="{{ url_for('admin.stock_alert') }}" class="btn">库存预警</a>
+            </div>
+            
+            <div class="menu-card">
+                <h3>借阅管理</h3>
+                <a href="{{ url_for('admin.manage_borrowings') }}" class="btn">借阅管理</a>
+                <a href="{{ url_for('admin.view_reports') }}" class="btn">统计报表</a>
+            </div>
+            
+            <div class="menu-card">
+                <h3>系统管理</h3>
+                <a href="{{ url_for('admin.system_management') }}" class="btn">系统维护</a>
+                <a href="{{ url_for('admin.logs') }}" class="btn">系统日志</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

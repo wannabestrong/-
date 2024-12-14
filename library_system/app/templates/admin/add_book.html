@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}图书管理{% endblock %}
+
+{% block content %}
+<div class="admin-content">
+    <h1>图书管理</h1>
+    
+    <!-- 添加图书表单 -->
+    <div class="admin-form">
+        <h2>添加新图书</h2>
+        <form method="POST" action="{{ url_for('admin.add_book') }}">
+            <div class="form-group">
+                <label for="title">书名：</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="author">作者：</label>
+                <input type="text" id="author" name="author" required>
+            </div>
+            <div class="form-group">
+                <label for="isbn">ISBN：</label>
+                <input type="text" id="isbn" name="isbn" required>
+            </div>
+            <div class="form-group">
+                <label for="price">价格：</label>
+                <input type="number" id="price" name="price" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="stock">库存：</label>
+                <input type="number" id="stock" name="stock" required>
+            </div>
+            <button type="submit" class="btn">添加图书</button>
+        </form>
+    </div>
+
+    <!-- 图书列表 -->
+    <div class="admin-list">
+        <h2>图书列表</h2>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>书名</th>
+                    <th>作者</th>
+                    <th>ISBN</th>
+                    <th>价格</th>
+                    <th>库存</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                <tr>
+                    <td>{{ book.id }}</td>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.isbn }}</td>
+                    <td>{{ book.price }}</td>
+                    <td>{{ book.stock }}</td>
+                    <td>
+                        <button onclick="deleteBook({{ book.id }})" class="btn btn-danger">删除</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function deleteBook(bookId) {
+    if (confirm('确定要删除这本书吗？')) {
+        fetch(`/admin/books/${bookId}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.error);
+            }
+        });
+    }
+}
+</script>
+{% endblock %} 

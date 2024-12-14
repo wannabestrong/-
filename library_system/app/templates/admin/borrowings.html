@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}借阅管理{% endblock %}
+
+{% block content %}
+<div class="admin-content">
+    <h1>借阅管理</h1>
+    
+    <!-- 借阅统计 -->
+    <div class="stats-section">
+        <h2>借阅统计</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>总借阅量</h3>
+                <p>{{ stats.overview.total_borrows }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>当前借出</h3>
+                <p>{{ stats.overview.current_borrowed }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>借阅人数</h3>
+                <p>{{ stats.overview.total_users }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>借阅图书数</h3>
+                <p>{{ stats.overview.total_books }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 待审批借阅 -->
+    <div class="section">
+        <h2>待审批借阅</h2>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>用户</th>
+                    <th>图书</th>
+                    <th>申请时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in pending %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.username }}</td>
+                    <td>{{ item.book_title }}</td>
+                    <td>{{ item.created_at }}</td>
+                    <td>
+                        <button onclick="approveBorrowing({{ item.id }}, true)" class="btn">批准</button>
+                        <button onclick="approveBorrowing({{ item.id }}, false)" class="btn btn-danger">拒绝</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- 超期未还 -->
+    <div class="section">
+        <h2>超期未还</h2>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>用户</th>
+                    <th>图书</th>
+                    <th>借阅日期</th>
+                    <th>超期天数</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in overdue %}
+                <tr>
+                    <td>{{ item.username }}</td>
+                    <td>{{ item.title }}</td>
+                    <td>{{ item.borrow_date }}</td>
+                    <td>{{ item.overdue_days }}</td>
+                    <td>
+                        <button onclick="sendReminder({{ item.borrowing_id }})" class="btn">发送提醒</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- 导出功能 -->
+    <div class="section">
+        <h2>导出借阅记录</h2>
+        <form action="{{ url_for('admin.export_borrowings') }}" method="GET">
+            <div class="form-group">
+                <label>开始日期：</label>
+                <input type="date" name="start_date" required>
+            </div>
+            <div class="form-group">
+                <label>结束日期：</label>
+                <input type="date" name="end_date" required>
+            </div>
+            <button type="submit" class="btn">导出CSV</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function approveBorrowing(id, approved) {
+    try {
+        const response = await fetch(`/admin/borrowings/${id}/approve`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `approved=${approved}`
+        });
+        
+        if(response.ok) {
+            location.reload();
+        } else {
+            const error = await response.json();
+            alert(error.error || '操作失败');
+        }
+    } catch(e) {
+        alert('操作失败：' + e.message);
+    }
+}
+
+async function sendReminder(borrowingId) {
+    // 实现发送提醒功能
+    alert('提醒功能待实现');
+}
+</script>
+{% endblock %} 

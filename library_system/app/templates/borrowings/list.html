@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}我的借阅{% endblock %}
+
+{% block content %}
+<div class="borrowings-list">
+    <h1>我的借阅</h1>
+    <table class="book-table">
+        <thead>
+            <tr>
+                <th>书名</th>
+                <th>借阅日期</th>
+                <th>应还日期</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for borrowing in borrowings %}
+            <tr>
+                <td>{{ borrowing.book_title }}</td>
+                <td>{{ borrowing.borrow_date }}</td>
+                <td>{{ borrowing.return_date }}</td>
+                <td>{{ '已归还' if borrowing.return_date else '借阅中' }}</td>
+                <td>
+                    {% if not borrowing.return_date %}
+                    <button onclick="returnBook({{ borrowing.id }})" class="btn">归还</button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+function returnBook(borrowingId) {
+    fetch(`/return/${borrowingId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            alert('归还成功！');
+            location.reload();
+        }
+    })
+    .catch(error => {
+        alert('归还失败，请重试');
+    });
+}
+</script>
+{% endblock %} 

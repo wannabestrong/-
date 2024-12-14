@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}首页{% endblock %}
+
+{% block content %}
+<div class="welcome">
+    <h1>欢迎来到图书管理系统！</h1>
+    <div class="features">
+        <h2>系统功能：</h2>
+        <ul>
+            <li><a href="{{ url_for('book.list_books') }}">浏览图书</a></li>
+            {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('borrowing.list_borrowings') }}">我的借阅</a></li>
+                {% if current_user.username == 'admin' %}
+                    <li><a href="{{ url_for('admin.dashboard') }}">系统管理</a></li>
+                {% endif %}
+            {% else %}
+                <li><a href="{{ url_for('auth.login') }}">登录</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

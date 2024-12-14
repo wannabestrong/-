@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %} - 图书管理系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">首页</a></li>
+            <li><a href="{{ url_for('book.list_books') }}">图书列表</a></li>
+            {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('borrowing.list_borrowings') }}">我的借阅</a></li>
+                <li><a href="{{ url_for('auth.logout') }}">退出</a></li>
+            {% else %}
+                <li><a href="{{ url_for('auth.login') }}">登录</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    
+    <main>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html> 

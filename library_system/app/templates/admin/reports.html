@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}统计报表{% endblock %}
+
+{% block content %}
+<div class="admin-content">
+    <h1>统计报表</h1>
+    
+    <!-- 借阅趋势 -->
+    <div class="section">
+        <h2>借阅趋势
+            <div class="export-buttons">
+                <a href="{{ url_for('admin.export_report', type='borrowing_trends', format='csv') }}" 
+                   class="btn">导出CSV</a>
+                <a href="{{ url_for('admin.export_report', type='borrowing_trends', format='excel') }}" 
+                   class="btn">导出Excel</a>
+            </div>
+        </h2>
+        
+        <!-- 趋势图 -->
+        <div class="chart">
+            <img src="data:image/png;base64,{{ charts.trends }}" alt="借阅趋势图">
+        </div>
+        
+        <!-- 趋势数据表格 -->
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>月份</th>
+                    <th>借阅量</th>
+                    <th>借阅人数</th>
+                    <th>借阅图书数</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trend in borrowing_trends %}
+                <tr>
+                    <td>{{ trend.month }}</td>
+                    <td>{{ trend.borrow_count }}</td>
+                    <td>{{ trend.user_count }}</td>
+                    <td>{{ trend.book_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- 分类统计 -->
+    <div class="section">
+        <h2>分类统计
+            <div class="export-buttons">
+                <a href="{{ url_for('admin.export_report', type='category_stats', format='csv') }}" 
+                   class="btn">导出CSV</a>
+                <a href="{{ url_for('admin.export_report', type='category_stats', format='excel') }}" 
+                   class="btn">导出Excel</a>
+            </div>
+        </h2>
+        
+        <!-- 分类饼图 -->
+        <div class="chart">
+            <img src="data:image/png;base64,{{ charts.categories }}" alt="分类统计图">
+        </div>
+        
+        <!-- 分类数据表格 -->
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>分类</th>
+                    <th>图书数量</th>
+                    <th>借阅次数</th>
+                    <th>平均价格</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stat in category_stats %}
+                <tr>
+                    <td>{{ stat.category_name }}</td>
+                    <td>{{ stat.book_count }}</td>
+                    <td>{{ stat.borrow_count }}</td>
+                    <td>￥{{ stat.avg_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- 用户活动统计 -->
+    <div class="section">
+        <h2>用户活动统计
+            <div class="export-buttons">
+                <a href="{{ url_for('admin.export_report', type='user_activity', format='csv') }}" 
+                   class="btn">导出CSV</a>
+                <a href="{{ url_for('admin.export_report', type='user_activity', format='excel') }}" 
+                   class="btn">导出Excel</a>
+            </div>
+        </h2>
+        
+        <!-- 用户类型分布 -->
+        <div class="stat-cards">
+            {% for type in user_activity.user_types %}
+            <div class="stat-card">
+                <h3>{{ type.user_type }}</h3>
+                <p>{{ type.user_count }} 人</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- 借阅时长分布 -->
+        <h3>借阅时长分布</h3>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>借阅时长</th>
+                    <th>借阅次数</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for duration in user_activity.duration_dist %}
+                <tr>
+                    <td>{{ duration.duration }}</td>
+                    <td>{{ duration.count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 

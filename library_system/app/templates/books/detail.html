@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+<div class="book-detail">
+    <h1>{{ book.title }}</h1>
+    <div class="book-info">
+        <p><strong>ISBN：</strong>{{ book.isbn }}</p>
+        <p><strong>出版社：</strong>{{ book.publisher_name }}</p>
+        <p><strong>分类：</strong>{{ book.category_name }}</p>
+    </div>
+    <div class="book-actions">
+        <button onclick="borrowBook({{ book.id }})" class="btn btn-primary">借阅此书</button>
+    </div>
+</div>
+
+<script>
+function borrowBook(bookId) {
+    fetch(`/borrow/${bookId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            alert('借阅成功！');
+            window.location.href = '/my-borrowings';
+        }
+    })
+    .catch(error => {
+        alert('借阅失败，请重试');
+    });
+}
+</script>
+{% endblock %} 
